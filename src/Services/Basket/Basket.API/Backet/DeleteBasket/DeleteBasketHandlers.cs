@@ -1,8 +1,10 @@
 ﻿
+using Basket.API.Data;
+
 namespace Basket.API.Backet.DeleteBasket
 {
     public record DeleteBasketCommand(string UserName) : ICommand<DeleteBasketResult>;
-    public record DeleteBasketResult(bool isSucsess);
+    public record DeleteBasketResult(bool IsSuccess);
 
     public class DeleteBasketCommandValidator : AbstractValidator<DeleteBasketCommand>
     {
@@ -11,12 +13,14 @@ namespace Basket.API.Backet.DeleteBasket
             RuleFor(x => x.UserName).NotEmpty().WithMessage("UserName is required");
         }
     }
-    public class DeleteBasketCommandHandlers : ICommandHandler<DeleteBasketCommand, DeleteBasketResult>
+    public class DeleteBasketCommandHandlers(IBasketRepository repository)
+        : ICommandHandler<DeleteBasketCommand, DeleteBasketResult>
     {
         public async Task<DeleteBasketResult> Handle(DeleteBasketCommand command, CancellationToken cancellationToken)
         {
             // TODO : delete baske from database and catch
-            // session.delete<product>(command.Id
+            await repository.DeleteBasket(command.UserName, cancellationToken);
+
             return new DeleteBasketResult(true);
         }
     }
